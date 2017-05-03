@@ -6,8 +6,8 @@ RFC7844 DHCPv4 summary and comments
 
 Notes:
 
-- Extracts from the RFC marked as `source code <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#literal-blocks>`_.
-- Unless otherwise explicited, this document refers to DHCPv4 clients implementing Anonymity Profiles.
+* Extracts from the RFC marked as `source code <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#literal-blocks>`_.
+* Unless otherwise explicited, this document refers to DHCPv4 clients implementing Anonymity Profiles.
 
 RFCs to the Comments to the RFC :)
 
@@ -298,13 +298,11 @@ Operational considerations
    Implementers SHOULD provide a way for clients to control when the
    anonymity profiles are used and when standard behavior is preferred.
 
-
-``dhcpcanon`` will not implement for now the standard behavior as
-it would require to implement more functionality and most of the current
-tools implement already the standard.
-
-Functionality not detailed in RFC7844
+Not detailed in RFC7844
 ---------------------------------------
+
+Probe the offered IP
+~~~~~~~~~~~~~~~~~~~~~
 [:rfc:`2131#2.2`]::
 
    the allocating
@@ -312,7 +310,80 @@ Functionality not detailed in RFC7844
    e.g., with an ICMP echo request, and the client SHOULD probe the
    newly received address, e.g., with ARP.
 
+    The client SHOULD perform a
+   check on the suggested address to ensure that the address is not
+   already in use.  For example, if the client is on a network that
+   supports ARP, the client may issue an ARP request for the suggested
+   request.  When broadcasting an ARP request for the suggested address,
+   the client must fill in its own hardware address as the sender's
+   hardware address, and 0 as the sender's IP address, to avoid
+   confusing ARP caches in other hosts on the same subnet.>>
+
+   The client SHOULD broadcast an ARP
+   reply to announce the client's new IP address and clear any outdated
+   ARP cache entries in hosts on the client's subnet.
+
 This should be interpreted as MUST.
+
+(after DHCPOFFER and before DHCPREQUEST, or after DHCPACK and before passing to BOUND state?)
+
+Retransmission delays
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There is not specification about the retransmission delays algorithms.
+::
+
+    For example, in a 10Mb/sec Ethernet
+    internetwork, the delay before the first retransmission SHOULD be 4
+    seconds randomized by the value of a uniform random number chosen
+    from the range -1 to +1
+
+    Clients with clocks that provide resolution
+    granularity of less than one second may choose a non-integer
+    randomization value.
+
+    The delay before the next retransmission SHOULD
+    be 8 seconds randomized by the value of a uniform number chosen from
+    the range -1 to +1.
+
+    The retransmission delay SHOULD be doubled with
+    subsequent retransmissions up to a maximum of 64 seconds.
+
+::
+
+    DHCP clients are free to use any strategy in selecting a DHCP server
+    among those from which the client receives a DHCPOFFER message.
+
+    client may choose to collect several DHCPOFFER
+    messages and select the "best" offer.
+
+    If the client receives no acceptable offers, the client
+    may choose to try another DHCPDISCOVER message.
+
+(what's a no acceptable offer?)::
+
+    The client collects DHCPOFFER messages over a period of time, selects
+    one DHCPOFFER message from the (possibly many) incoming DHCPOFFER
+    messages
+
+    The time
+    over which the client collects messages and the mechanism used to
+    select one DHCPOFFER are implementation dependent.
+
+Sending DHCPREQUEST
+
+* timeout waiting for ACK?
+
+Timers
+~~~~~~~
+
+    T1
+    defaults to (0.5 * duration_of_lease).  T2 defaults to (0.875 *
+    duration_of_lease).  Times T1 and T2 SHOULD be chosen with some
+    random "fuzz" around a fixed value, to avoid synchronization of
+    client reacquisition.
+
+what's the fixed value for the fuzz and how is it calculated?
 
 Leases
 ~~~~~~~~
@@ -320,11 +391,6 @@ Leases
 If there is not INIT-REBOOT state and in order to keep the implementation simple, there will not be leases eiter.
 [TBD]: add more comments here.
 
-Retransmission delays
-~~~~~~~~~~~~~~~~~~~~~~
-
-There is not specification about the retransmission delays algorithms.
-[TBC]
 
 Client Identifier algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
