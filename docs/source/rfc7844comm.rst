@@ -7,19 +7,16 @@ RFC7844 DHCPv4 summary and comments
 Notes:
 
 * Extracts from the RFC marked as `source code <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#literal-blocks>`_.
-* Unless otherwise explicited, this document refers to DHCPv4 clients implementing Anonymity Profiles.
+* Unless otherwise explicited, this document refers to DHCPv4 clients
+implementing Anonymity Profiles.
 
-RFCs to the Comments to the RFC :)
+Most of the comments are regarding the verbs (``key words`` [:rfc:`2119`]) used.
 
-Unfortunately, the deadline for the comments officially expired around Feb 2016 [cit needed].
-
-An approved RFC can not be changed [cit need],
-**if** any of the following comments are "correct" [other more "correct" word than "correct" needed here], a new RFC should be proposed.
-
-Most of the comments are regarding the verbs (``key words`` [:rfc:`2119`]) used, the author here does not have previous experience on proposing/commenting RFCs, so they might not be "correct".
-
-Basically, in order to reveal less identifying information, the options in DHCP should be reduced in number and be more "homogenous" for all implementations what here is interpreted as in either this option MUST be included or MUST NOT, instead of MAY, SHOULD, etc.
-What is a similar way to express what is stated in :rfc:`7844#2.4`. ::
+Basically, in order to reveal less identifying information, the options in DHCP
+ should be reduced in number and be more "homogenous" for all implementations
+ what here is interpreted as in either this option MUST be included or MUST NOT,
+ instead of MAY, SHOULD, etc.
+What is a similar way to express what is stated in [:rfc:`7844#2.4`]. ::
 
    The design of the anonymity profiles attempts to minimize the number
    of options and the choice of values, in order to reduce the
@@ -190,7 +187,8 @@ What should be interpreted as MUST::
    randomized value, the DHCP client SHOULD use the new randomized value
    in the DHCP messages
 
-The client should be restarted when the hardware address changes and use the current address instead of the permanent one.
+The client should be restarted when the hardware address changes and
+ use the current address instead of the permanent one.
 
 Client Identifier Option (code 61)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -207,14 +205,7 @@ Client Identifier Option (code 61)
 
 As in DHCPDISCOVER_, it SHOULD NOT have this option
 
-If it has it: what about having a common algorithm for all clients that is not based on "identifying" properties?::
-
-   The algorithm for combining secrets and identifiers, as
-   described in Section 5 of [RFC7217], solves a similar problem.  The
-   criteria for the generation of random numbers are stated
-   in [RFC4086].
-
-Could be this the non "identifying" algorithm?
+See client-identifier-algorithm_ for more details.
 
 Parameter Request List Option (PRL) (code 55)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -330,9 +321,14 @@ This should be interpreted as MUST.
 Retransmission delays
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There is not specification about the retransmission delays algorithms.
-::
+There is not specification about the retransmission delays algorithms in [:rfc:`7844#`].
 
+[:rfc:`2131#3.1`]::
+
+    might retransmit the
+    DHCPREQUEST message four times, for a total delay of 60 seconds
+
+[:rfc:`2131#4.1`]::
     For example, in a 10Mb/sec Ethernet
     internetwork, the delay before the first retransmission SHOULD be 4
     seconds randomized by the value of a uniform random number chosen
@@ -349,7 +345,9 @@ There is not specification about the retransmission delays algorithms.
     The retransmission delay SHOULD be doubled with
     subsequent retransmissions up to a maximum of 64 seconds.
 
-::
+Selecting offer algorithm
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[:rfc:`2131#4.2`]::::
 
     DHCP clients are free to use any strategy in selecting a DHCP server
     among those from which the client receives a DHCPOFFER message.
@@ -362,6 +360,7 @@ There is not specification about the retransmission delays algorithms.
 
 (what's a no acceptable offer?)::
 
+[:rfc:`2131#4.4.1`]::
     The client collects DHCPOFFER messages over a period of time, selects
     one DHCPOFFER message from the (possibly many) incoming DHCPOFFER
     messages
@@ -370,12 +369,11 @@ There is not specification about the retransmission delays algorithms.
     over which the client collects messages and the mechanism used to
     select one DHCPOFFER are implementation dependent.
 
-Sending DHCPREQUEST
-
-* timeout waiting for ACK?
+Is it different the timeout waiting for offer or ack/nak?, in all states?
 
 Timers
 ~~~~~~~
+[:rfc:`2131#4.4.5`]::
 
     T1
     defaults to (0.5 * duration_of_lease).  T2 defaults to (0.875 *
@@ -388,11 +386,30 @@ what's the fixed value for the fuzz and how is it calculated?
 Leases
 ~~~~~~~~
 
-If there is not INIT-REBOOT state and in order to keep the implementation simple, there will not be leases eiter.
-[TBD]: add more comments here.
+[:rfc:`7844#3.3`]::
 
+    There are scenarios in which a client connecting to a network
+    remembers a previously allocated address, i.e., when it is in the
+    INIT-REBOOT state.  In that state, any client that is concerned with
+    privacy SHOULD perform a complete four-way handshake, starting with a
+    DHCPDISCOVER, to obtain a new address lease.  If the client can
+    ascertain that this is exactly the same network to which it was
+    previously connected, and if the link-layer address did not change,
+    the client MAY issue a DHCPREQUEST to try to reclaim the current
+    address.
+
+See details in `RFC7844 comments <https://dhcpcanon.readthedocs.io#leases>`_.
 
 Client Identifier algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-[TBD]
+If the Client Identifier option is used, it should not reveal extra information.
+What about having a common algorithm for all clients that is not based on
+"identifying" properties?::
+
+   The algorithm for combining secrets and identifiers, as
+   described in Section 5 of [RFC7217], solves a similar problem.  The
+   criteria for the generation of random numbers are stated
+   in [RFC4086].
+
+Could be this the non "identifying" algorithm?
