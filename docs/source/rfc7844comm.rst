@@ -119,8 +119,10 @@ MAY as in DHCPDISCOVER_
 
 To do not leak when the client leaves the network, this message type
 should not be implemented.
+
 In this case, servers might run out of leases, but that is something
 that servers should fix decreasing the lease time.
+
 Or all clients requesting a minor lease time?.
 
 DHCPINFORM
@@ -205,7 +207,7 @@ Client Identifier Option (code 61)
 
 As in DHCPDISCOVER_, it SHOULD NOT have this option
 
-See client-identifier-algorithm_ for more details.
+See :ref:`client-identifier-algorithm` for more details.
 
 Parameter Request List Option (PRL) (code 55)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -329,6 +331,7 @@ There is not specification about the retransmission delays algorithms in [:rfc:`
     DHCPREQUEST message four times, for a total delay of 60 seconds
 
 [:rfc:`2131#4.1`]::
+
     For example, in a 10Mb/sec Ethernet
     internetwork, the delay before the first retransmission SHOULD be 4
     seconds randomized by the value of a uniform random number chosen
@@ -347,7 +350,7 @@ There is not specification about the retransmission delays algorithms in [:rfc:`
 
 Selecting offer algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-[:rfc:`2131#4.2`]::::
+[:rfc:`2131#4.2`]::
 
     DHCP clients are free to use any strategy in selecting a DHCP server
     among those from which the client receives a DHCPOFFER message.
@@ -358,9 +361,10 @@ Selecting offer algorithm
     If the client receives no acceptable offers, the client
     may choose to try another DHCPDISCOVER message.
 
-(what's a no acceptable offer?)::
+(what is a no acceptable offer?)::
 
 [:rfc:`2131#4.4.1`]::
+  
     The client collects DHCPOFFER messages over a period of time, selects
     one DHCPOFFER message from the (possibly many) incoming DHCPOFFER
     messages
@@ -399,6 +403,8 @@ Leases
     address.
 
 See details in `RFC7844 comments <https://dhcpcanon.readthedocs.io#leases>`_.
+
+.. _client-identifier-algorithm:
 
 Client Identifier algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
