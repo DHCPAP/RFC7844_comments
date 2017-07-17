@@ -4,46 +4,51 @@
 RFC7844 DHCPv4 summary and comments
 =====================================
 
-Notes:
+In order to reveal less identifying information, the options in DHCP
+should be reduced in number and be more "homogenous" for all implementations,
+as stated in [:rfc:`7844#section-2.4`].::
 
-* Extracts from the RFC marked as `source code <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#literal-blocks>`_.
-* Unless otherwise explicited, this document refers to DHCPv4 clients
-implementing Anonymity Profiles.
+     The design of the Anonymity Profiles attempts to minimize the number
+     of options and the choice of values, in order to reduce the
+     possibilities of operating system fingerprinting.
 
-Most of the comments are regarding the verbs (``key words`` [:rfc:`2119`]) used.
+To reveal **still** less identifying information most of the MAY, SHOULD keywords
+should be replaced by MUST or MUST NOT.
 
-Basically, in order to reveal less identifying information, the options in DHCP
- should be reduced in number and be more "homogenous" for all implementations
- what here is interpreted as in either this option MUST be included or MUST NOT,
- instead of MAY, SHOULD, etc.
-What is a similar way to express what is stated in [:rfc:`7844#2.4`]. ::
+Most of the comments here are regarding the verbs (``key words`` [:rfc:`2119`]) used.
 
-   The design of the anonymity profiles attempts to minimize the number
-   of options and the choice of values, in order to reduce the
-   possibilities of operating system fingerprinting.
+See `RFC7844 DHCPv4 restricted version summary <https://dhcpcanon.readthedocs.io/en/latest/specification.html>`_
+for what would be a more restricitive version of [:rfc:`7844`],
+where the keywords are actually replaced. Use ``diff`` to see specific differences between these
+two documents.
+
+.. note::
+
+    Extracts from the  [:rfc:`7844`] marked as
+    `literal blocks <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#literal-blocks>`_.
 
 
-Mesagge types
+Message types
 -----------------
 
 DHCP*
 ~~~~~~
-[:rfc:`7844#3.1`] ::
+[:rfc:`7844#section-3.1`]::
 
     SHOULD randomize the ordering of options
 
-Why not s/SHOULD/MUST?
+This could be s/SHOULD/MUST
 ::
 
     If this can not be implemented
     MAY order the options by option code number (lowest to highest).
 
-Why not s/MAY/MUST?
+This could be s/MAY/MUST
 
 
 DHCPDISCOVER
 ~~~~~~~~~~~~~
-[:rfc:`7844#3.`] ::
+[:rfc:`7844#section-3.`]::
 
     MUST contain the Message Type option,
 
@@ -52,19 +57,19 @@ DHCPDISCOVER
     MAY contain the Client Identifier option,
     MAY contain the Parameter Request List option.
 
-Why not s/MAY/MUST NOT?,
+This could be s/MAY/MUST NOT, though:
 
-because servers will requests that do not contain those options? (found at least 1 case of server ignoring request without the Client Identifier option),
+- Some servers will not answer to clients that does not contain the Client Identifier
 
-what RFC for DHCP server says about it?::
+- what RFC for DHCP server says about it?::
 
     SHOULD NOT contain any other option.
 
-Why not s/SHOULD NOT/MUST NOT?
+This could be s/SHOULD NOT/MUST NOT
 
 DHCPREQUEST
 ~~~~~~~~~~~~~
-[:rfc:`7844#3.`] ::
+[:rfc:`7844#section-3.`]::
 
     MUST contain the Message Type option,
 
@@ -76,20 +81,18 @@ DHCPREQUEST
 
 MAY, SHOULD NOT as in DHCPDISCOVER_::
 
-    If in response to a DHCPOFFER,::
+    If in response to a DHCPOFFER,
     MUST contain the corresponding Server Identifier option
     MUST contain the Requested IP address option.
 
-::
-
-    If the message is not in response to a DHCPOFFER (BOUND, RENEW),::
+    If the message is not in response to a DHCPOFFER (BOUND, RENEW),
     MAY contain a Requested IP address option
 
-Why not s/MAY/MUST?
+This could be s/MAY/MUST?
 
 DHCPDECLINE
 ~~~~~~~~~~~~~
-[:rfc:`7844#3.`] ::
+[:rfc:`7844#section-3.`]::
 
     MUST contain the Message Type option,
     MUST contain the Server Identifier option,
@@ -106,7 +109,7 @@ Why here there is not SHOULD NOT as in DHCPDISCOVER_
 
 DHCPRELEASE
 ~~~~~~~~~~~~~
-[:rfc:`7844#3.`] ::
+[:rfc:`7844#section-3.`]::
 
     MUST contain the Message Type option and
     MUST contain the Server Identifier option,
@@ -123,11 +126,10 @@ should not be implemented.
 In this case, servers might run out of leases, but that is something
 that servers should fix decreasing the lease time.
 
-Or all clients requesting a minor lease time?.
 
 DHCPINFORM
 ~~~~~~~~~~~~~
-[:rfc:`7844#3.`] ::
+[:rfc:`7844#section-3.`]::
 
     MUST contain the Message Type option,
 
@@ -136,25 +138,24 @@ DHCPINFORM
     MAY contain the Client Identifier option,
     MAY contain the Parameter Request List option.
 
-::
-
     It SHOULD NOT contain any other option.
 
-
 MAY, SHOULD NOT as in DHCPDISCOVER_
+
 
 Message Options
 -----------------
 
 Client IP address (ciaddr)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-[:rfc:`7844#3.2`] ::
+[:rfc:`7844#section-3.2`]::
 
-    MUST NOT include in the message a Client IP address that has been obtained with a different link-layer address.
+    MUST NOT include in the message a Client IP address that has been obtained
+    with a different link-layer address.
 
 Requested IP Address Option (code 50)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-[:rfc:`7844#3.3`] ::
+[:rfc:`7844#section-3.3`]::
 
    SHOULD NOT use the Requested IP address option in DHCPDISCOVER messages.
    MUST use the option when mandated (DHCPREQUEST)
@@ -164,21 +165,13 @@ Requested IP Address Option (code 50)
     If in INIT-REBOOT:
     SHOULD perform a complete four-way handshake, starting with a DHCPDISCOVER
 
-This is like not having INIT-REBOOT state?
-
-::
-
     If the client can ascertain that this is exactly the same network to which it was previously connected, and if the link-layer address did not change,
     MAY issue a DHCPREQUEST to try to reclaim the current address.
-
-This is like INIT-REBOOT state?
-
-There is not a way to know ``if`` the link-layer address changed without leaking the link-layer?
 
 
 Client Hardware Address Field
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-[ :rfc:`7844#3.4` ] ::
+[:rfc:`7844#section-3.4`]::
 
    The presence of this address is necessary for the proper operation of the DHCP
    service.
@@ -190,28 +183,21 @@ What should be interpreted as MUST::
    in the DHCP messages
 
 The client should be restarted when the hardware address changes and
- use the current address instead of the permanent one.
+use the current address instead of the permanent one.
 
 Client Identifier Option (code 61)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-[ :rfc:`7844#3.5` ] ::
+[:rfc:`7844#section-3.5`]::
 
-   In contradiction to [RFC4361], when using the anonymity profile, DHCP
+   DHCP
    clients MUST use client identifiers based solely on the link-layer
-   address that will be used in the underlying connection.  This will
-   ensure that the DHCP client identifier does not leak any information
-   that is not already available to entities monitoring the network
-   connection.  It will also ensure that a strategy of randomizing the
-   link-layer address will not be nullified by the Client Identifier
-   option.
+   address that will be used in the underlying connection.
 
 As in DHCPDISCOVER_, it SHOULD NOT have this option
 
-See :ref:`client-identifier-algorithm` for more details.
-
 Parameter Request List Option (PRL) (code 55)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-[:rfc:`7844#3.6`] ::
+[:rfc:`7844#section-3.6`]::
 
    SHOULD only request a minimal number of options in the PRL and
    SHOULD also randomly shuffle the ordering of option codes in the PRL.
@@ -223,7 +209,7 @@ As in DHCPDISCOVER_
 Host Name option (code 12)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-[:rfc:`7844#3.7`] ::
+[:rfc:`7844#section-3.7`]::
 
    SHOULD NOT send the Host Name option.
    If they choose to send the option [..]
@@ -232,7 +218,7 @@ As in DHCPDISCOVER_
 
 Client FQDN Option (code 81)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-[:rfc:`7844#3.8`:] ::
+[:rfc:`7844#section-3.8`]::
 
     SHOULD NOT include the Client FQDN option
 
@@ -243,60 +229,50 @@ As in DHCPDISCOVER_
    Host Name option, with a suffix matching the connection-specific DNS
    suffix being advertised by that DHCP server.
 
-
-In this case there is an explicit reason why it MAY::
+reason why it MAY::
 
    Having a name in the
    DNS allows working with legacy systems that require one to be there
 
 UUID/GUID-Based Client Machine Identifier Option (code 97)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-[:rfc:`7844#3.9`] ::
+[:rfc:`7844#section-3.9`]::
 
    This option is part of a set of options for the
    Intel Preboot eXecution Environment (PXE)
-
-::
 
    Common sense seems to
    dictate that getting a new operating system from an unauthenticated
    server at an untrusted location is a really bad idea and that even if
    the option was available users would not activate it.
 
-::
-
    Nodes visiting untrusted networks MUST NOT send or use the PXE options.
 
-And in the hypotetical case that nodes are visiting a "trusted" network,
-must this option be included for the PXE to work properly?
-
-Regarding english expression, should s/or/nor?,
-and how to define "common sense"? :)
 
 User and Vendor Class DHCP Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-[:rfc:`7844#3.10`] ::
+[:rfc:`7844#section-3.10`]::
 
    SHOULD NOT use the
    Vendor-Specific Information option (code 43), the Vendor Class
    Identifier option (code 60), the V-I Vendor Class option (code 124),
    or the V-I Vendor-Specific Information option (code 125),
 
-Why not s/SHOULD NOT/MUST NOT?
+This could be s/SHOULD NOT/MUST NOT?
 
 Operational considerations
 ---------------------------
-[:rfc:`7844#5.`] ::
+[:rfc:`7844#section-5.`]::
 
    Implementers SHOULD provide a way for clients to control when the
    anonymity profiles are used and when standard behavior is preferred.
 
-Not detailed in RFC7844
----------------------------------------
+Not specified in RFC7844, but in RFC2131
+-----------------------------------------
 
 Probe the offered IP
 ~~~~~~~~~~~~~~~~~~~~~
-[:rfc:`2131#2.2`]::
+[:rfc:`2131#section-2.2`]::
 
    the allocating
    server SHOULD probe the reused address before allocating the address,
@@ -316,21 +292,33 @@ Probe the offered IP
    reply to announce the client's new IP address and clear any outdated
    ARP cache entries in hosts on the client's subnet.
 
-This should be interpreted as MUST.
+This could be s/SHOULD/MUST.
 
-(after DHCPOFFER and before DHCPREQUEST, or after DHCPACK and before passing to BOUND state?)
 
 Retransmission delays
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There is not specification about the retransmission delays algorithms in [:rfc:`7844#`].
+Sending DHCPDISCOVER [:rfc:`2131#section-4.4.1`]::
 
-[:rfc:`2131#3.1`]::
+    The client SHOULD wait a random time between one and ten seconds to
+       desynchronize the use of DHCP at startup.
 
-    might retransmit the
+[:rfc:`2131#section-3.1`]::
+
+    a client retransmitting as described in section 4.1 might retransmit the
     DHCPREQUEST message four times, for a total delay of 60 seconds
 
-[:rfc:`2131#4.1`]::
+[:rfc:`2131#section-4.4.5`]::
+
+    In both RENEWING and REBINDING states,
+    if the client receives no response to its DHCPREQUEST
+    message, the client SHOULD wait one-half of the remaining
+    time until T2 (in RENEWING state) and one-half of the
+    remaining lease time (in REBINDING state), down to a
+    minimum of 60 seconds, before retransmitting the
+    DHCPREQUEST message.
+
+[:rfc:`2131#section-4.1`]::
 
     For example, in a 10Mb/sec Ethernet
     internetwork, the delay before the first retransmission SHOULD be 4
@@ -350,7 +338,7 @@ There is not specification about the retransmission delays algorithms in [:rfc:`
 
 Selecting offer algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-[:rfc:`2131#4.2`]::
+[:rfc:`2131#section-4.2`]::
 
     DHCP clients are free to use any strategy in selecting a DHCP server
     among those from which the client receives a DHCPOFFER message.
@@ -361,10 +349,8 @@ Selecting offer algorithm
     If the client receives no acceptable offers, the client
     may choose to try another DHCPDISCOVER message.
 
-(what is a no acceptable offer?)::
+[:rfc:`2131#section-4.4.1`]::
 
-[:rfc:`2131#4.4.1`]::
-  
     The client collects DHCPOFFER messages over a period of time, selects
     one DHCPOFFER message from the (possibly many) incoming DHCPOFFER
     messages
@@ -373,24 +359,21 @@ Selecting offer algorithm
     over which the client collects messages and the mechanism used to
     select one DHCPOFFER are implementation dependent.
 
-Is it different the timeout waiting for offer or ack/nak?, in all states?
-
 Timers
 ~~~~~~~
-[:rfc:`2131#4.4.5`]::
+[:rfc:`2131#section-4.4.5`]::
 
-    T1
+    Times T1 and T2 are configurable by the server through options.  T1
     defaults to (0.5 * duration_of_lease).  T2 defaults to (0.875 *
     duration_of_lease).  Times T1 and T2 SHOULD be chosen with some
     random "fuzz" around a fixed value, to avoid synchronization of
     client reacquisition.
 
-what's the fixed value for the fuzz and how is it calculated?
 
 Leases
-~~~~~~~~
+~~~~~~~
 
-[:rfc:`7844#3.3`]::
+[:rfc:`7844#section-3.3`]::
 
     There are scenarios in which a client connecting to a network
     remembers a previously allocated address, i.e., when it is in the
@@ -401,21 +384,3 @@ Leases
     previously connected, and if the link-layer address did not change,
     the client MAY issue a DHCPREQUEST to try to reclaim the current
     address.
-
-See details in `RFC7844 comments <https://dhcpcanon.readthedocs.io#leases>`_.
-
-.. _client-identifier-algorithm:
-
-Client Identifier algorithm
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If the Client Identifier option is used, it should not reveal extra information.
-What about having a common algorithm for all clients that is not based on
-"identifying" properties?::
-
-   The algorithm for combining secrets and identifiers, as
-   described in Section 5 of [RFC7217], solves a similar problem.  The
-   criteria for the generation of random numbers are stated
-   in [RFC4086].
-
-Could be this the non "identifying" algorithm?

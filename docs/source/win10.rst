@@ -4,10 +4,10 @@
 Windows 10 RFC7844 implementation
 =====================================
 
-Windows 10 implements DHCP Anonymity Profile [#]_ on wireless devices when enabling hardware
+Windows 10 implements DHCP Anonymity Profiles [#]_ on wireless devices when enabling hardware
 address randomization [#]_ [#]_ .
 
-.. [#] DHCP Anonymity Profile Update: https://www.ietf.org/proceedings/93/slides/slides-93-dhc-1.pdf
+.. [#] DHCP Anonymity Profiles Update: https://www.ietf.org/proceedings/93/slides/slides-93-dhc-1.pdf
 
 .. [#] Experience with MAC Address Randomization in Windows 10: https://www.ietf.org/proceedings/93/slides/slides-93-intarea-5.pdf
 
